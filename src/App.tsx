@@ -1,11 +1,23 @@
 import React from 'react';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import { Layout, Menu, Breadcrumb } from 'antd';
+import {
+  HashRouter as Router,
+  Switch,
+  Route,
+  HashRouter,
+} from 'react-router-dom';
+import { Layout, Menu, Breadcrumb, Button } from 'antd';
 import {
   UserOutlined,
   LaptopOutlined,
   NotificationOutlined,
 } from '@ant-design/icons';
+import { bindActionCreators, Dispatch } from 'redux';
+import { connect } from 'react-redux';
+import {
+  increaseCounter,
+  decreaseCounter,
+} from './redux/Counter/counter.actions';
+import RootReducer from './redux/rootReducer';
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
@@ -75,12 +87,30 @@ const Home = () => {
   );
 };
 
-export default function App() {
+function App() {
+  // eslint-disable-next-line prefer-const
+  // let { count, increaseCounter, decreaseCounter } = props;
   return (
-    <Router>
+    <HashRouter>
       <Switch>
-        <Route path="/" component={Home} />
+        <Route path="/">
+          <Home />
+        </Route>
       </Switch>
-    </Router>
+    </HashRouter>
   );
 }
+
+const mapStateToProps = (state: ReturnType<typeof RootReducer>) => {
+  return {
+    count: state.counter.count,
+  };
+};
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return {
+    increaseCounter: () => dispatch(increaseCounter()),
+    decreaseCounter: () => dispatch(decreaseCounter()),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
